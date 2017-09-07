@@ -11,7 +11,7 @@ original text.
 
 `summarize(document, threshold [, callback])`: Provide the `document` text,
 a similarity `threshold` value (between 0 and 1, inclusive) and for the 
-asynchronous callback version, the callback function.
+asynchronous callback version, the `callback` function.
 
 Minimal usage:
 
