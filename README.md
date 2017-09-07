@@ -44,8 +44,11 @@ TextSummarizer.summarizeAsyncPromise('This is a sample text')
 
 ## Testing
 
-Uses `babel` to transpile ES6 code to ES5 code, `gulp` to minify the ES5 
-code and `mocha` for testing:
+In the `tests/sampleText.txt` file, replace the text with the text of your
+choosing. This uses `babel` to transpile ES6 code to ES5 code, `gulp` to minify 
+the ES5 code, and runs the text in the sample text file through the text 
+summarizer with a default threshold value of 0.1, and prints out the character
+length of the original text with that of the summarized text:
 
 ```
 npm test

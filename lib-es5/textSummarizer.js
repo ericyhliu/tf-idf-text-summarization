@@ -24,8 +24,8 @@ var fs = require('fs');
 var natural = require('natural');
 var Tokenizer = require('sentence-tokenizer');
 
-var _require = require('./porterStemmer'),
-    PorterStemmer = _require.PorterStemmer;
+var _require = require('porter-stemmer'),
+    stemmer = _require.stemmer;
 
 var TextSummarizer = function () {
     function TextSummarizer() {
@@ -64,7 +64,7 @@ var TextSummarizer = function () {
             docWords = docWords.filter(function (w) {
                 return w.match(/[a-z]/i) && !TextSummarizer._isNumber(w);
             }).map(function (w) {
-                return PorterStemmer.stem(w.toLowerCase());
+                return stemmer(w.toLowerCase());
             });
 
             var docVector = TextSummarizer._convertToVector(docWords);
@@ -77,7 +77,7 @@ var TextSummarizer = function () {
                     vector: TextSummarizer._convertToVector(wordTokenizer.tokenize(s).filter(function (w) {
                         return w.match(/[a-z]/i) && !TextSummarizer._isNumber(w);
                     }).map(function (w) {
-                        return PorterStemmer.stem(w.toLowerCase());
+                        return stemmer(w.toLowerCase());
                     })),
                     index: i
                 };
@@ -147,7 +147,30 @@ var TextSummarizer = function () {
                 return sv.original;
             }).join('\n');
 
+            // Return summarized version of the text:
             return summary;
+        }
+    }, {
+        key: 'summarizeAsync',
+        value: function summarizeAsync(document, threshold, callback) {
+            try {
+                var summary = TextSummarizer.summarize(document);
+                return callback(summary, undefined);
+            } catch (e) {
+                return callback(undefined, e);
+            }
+        }
+    }, {
+        key: 'summarizeAsyncPromise',
+        value: function summarizeAsyncPromise(document, threshold) {
+            return new Promise(function (resolve, reject) {
+                try {
+                    var summary = TextSummarizer.summarize(document);
+                    return resolve(summary);
+                } catch (e) {
+                    return reject(e);
+                }
+            });
         }
     }]);
 
