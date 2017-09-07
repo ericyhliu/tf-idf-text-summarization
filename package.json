@@ -19,5 +19,9 @@
     "gulp-uglify": "^3.0.0",
     "mocha": "^3.5.0",
     "pump": "^1.0.2"
+  },
+  "dependencies": {
+    "porter-stemmer": "^0.9.1",
+    "sentence-tokenizer": "0.0.8"
   }
 }
