@@ -22,7 +22,7 @@ TextSummarizer.summarize('This is a sample text');
 Asynchronous (callback) version:
 
 ```
-TextSummarizer.summarize('This is a sample text', (result, error) => {
+TextSummarizer.summarizeAsync('This is a sample text', (result, error) => {
     if (error) {
         // Handle error...
     } 
@@ -33,7 +33,7 @@ TextSummarizer.summarize('This is a sample text', (result, error) => {
 Asynchronous (Promise) version:
 
 ```
-TextSummarizer.summarize('This is a sample text')
+TextSummarizer.summarizeAsyncPromise('This is a sample text')
 .then((result) => {
     // Do something...
 })
