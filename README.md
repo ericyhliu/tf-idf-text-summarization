@@ -16,13 +16,13 @@ asynchronous callback version, the `callback` function.
 Minimal usage:
 
 ```
-TextSummarizer.summarize('This is a sample text');
+TextSummarizer.summarize('This is a sample text', 0.1);
 ```
 
 Asynchronous (callback) version:
 
 ```
-TextSummarizer.summarizeAsync('This is a sample text', (result, error) => {
+TextSummarizer.summarizeAsync('This is a sample text', 0.1, (result, error) => {
     if (error) {
         // Handle error...
     } 
@@ -33,7 +33,7 @@ TextSummarizer.summarizeAsync('This is a sample text', (result, error) => {
 Asynchronous (Promise) version:
 
 ```
-TextSummarizer.summarizeAsyncPromise('This is a sample text')
+TextSummarizer.summarizeAsyncPromise('This is a sample text', 0.1)
 .then((result) => {
     // Do something...
 })
