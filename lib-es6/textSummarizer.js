@@ -119,7 +119,9 @@ class TextSummarizer {
             let dotProd = 0;
             sv.keys.forEach((k) => {
                 sv.vector[k].tfIdf = sv.vector[k].weight * idf[k];
-                dotProd += sv.vector[k].tfIdf * docVector[k].tfIdf;
+                if (sv.vector[k].tfIdf && docVector[k].tfIdf) {
+                    dotProd += sv.vector[k].tfIdf * docVector[k].tfIdf;
+                }
                 svNorm += Math.pow(sv.vector[k].tfIdf, 2);
             });
             svNorm = Math.sqrt(svNorm);
@@ -137,14 +139,17 @@ class TextSummarizer {
         // with scores that are greater or equal to the threshold
         // (between 0 - 1):
         let summary = sentVectors
-        .filter((sv) => {
+        .filter((sv, i) => {
+            if (i == 0) {
+                return true; // Always include first sentence
+            }
             return sv.score >= threshold;
         })
         .map((sv) => {
             return sv.original;
         })
         .join('\n');
-        
+
         // Return summarized version of the text:
         return summary;
     }
