@@ -154,26 +154,27 @@ class TextSummarizer {
         return summary;
     }
 
+    // Asynchronous version, use callback if it is passed, otherwise, return a 
+    // Promise:
     static summarizeAsync(document, threshold, callback) {
-        try {
-            let summary = TextSummarizer.summarize(document);
-            return callback(summary, undefined);
-        } catch (e) {
-            return callback(undefined, e);
-        }
-    }
-
-    static summarizeAsyncPromise(document, threshold) {
-        return new Promise((resolve, reject) => {
+        if (callback) {
             try {
                 let summary = TextSummarizer.summarize(document);
-                return resolve(summary);
+                return callback(summary, undefined);
             } catch (e) {
-                return reject(e);
+                return callback(undefined, e);
             }
-        });
+        } else {
+            return new Promise((resolve, reject) => {
+                try {
+                    let summary = TextSummarizer.summarize(document);
+                    return resolve(summary);
+                } catch (e) {
+                    return reject(e);
+                }
+            });
+        }
     }
-
 }
 
 module.exports = {

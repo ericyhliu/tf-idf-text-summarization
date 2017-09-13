@@ -9,9 +9,11 @@ original text.
 
 ## Usage
 
-`summarize(document, threshold [, callback])`: Provide the `document` text,
+`summarize(document, threshold)` or 
+`summarizeAsync(document, threshold [, callback])`: Provide the `document` text,
 a similarity `threshold` value (between 0 and 1, inclusive) and for the 
-asynchronous callback version, the `callback` function.
+asynchronous callback version, the `callback` function, or if no `callback` is 
+passed, then it returns a Promise.
 
 Minimal usage:
 
@@ -33,7 +35,7 @@ TextSummarizer.summarizeAsync('This is a sample text', 0.1, (result, error) => {
 Asynchronous (Promise) version:
 
 ```
-TextSummarizer.summarizeAsyncPromise('This is a sample text', 0)
+TextSummarizer.summarizeAsync('This is a sample text', 0)
 .then((result) => {
     // Do something...
 })
