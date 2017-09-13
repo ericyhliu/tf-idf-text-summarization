@@ -39,13 +39,13 @@ class TextSummarizer {
         return vector;
     }
 
-    static summarize(document, threshold) {
+    static summarize(doc, threshold) {
         let wordTokenizer = new natural.WordTokenizer();
-        let documentTokenizer = new Tokenizer();
-        documentTokenizer.setEntry(document);
+        let docTokenizer = new Tokenizer();
+        docTokenizer.setEntry(doc);
 
         // Convert document into vector, normalize document tokens:
-        let docWords = wordTokenizer.tokenize(document);
+        let docWords = wordTokenizer.tokenize(doc);
         docWords = docWords
         .filter((w) => {
             return w.match(/[a-z]/i) && !TextSummarizer._isNumber(w);
@@ -58,7 +58,7 @@ class TextSummarizer {
 
         // Tokenize document by sentence, convert each sentence into a vector,
         // normalize sentence tokens:
-        let sentVectors = documentTokenizer.getSentences()
+        let sentVectors = docTokenizer.getSentences()
         .map((s, i) => {
             return {
                 original: s,
@@ -156,10 +156,10 @@ class TextSummarizer {
 
     // Asynchronous version, use callback if it is passed, otherwise, return a 
     // Promise:
-    static summarizeAsync(document, threshold, callback) {
+    static summarizeAsync(doc, threshold, callback) {
         if (callback) {
             try {
-                let summary = TextSummarizer.summarize(document);
+                let summary = TextSummarizer.summarize(doc);
                 return callback(summary, undefined);
             } catch (e) {
                 return callback(undefined, e);
@@ -167,7 +167,7 @@ class TextSummarizer {
         } else {
             return new Promise((resolve, reject) => {
                 try {
-                    let summary = TextSummarizer.summarize(document);
+                    let summary = TextSummarizer.summarize(doc);
                     return resolve(summary);
                 } catch (e) {
                     return reject(e);

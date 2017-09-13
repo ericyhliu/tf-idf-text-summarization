@@ -54,13 +54,13 @@ var TextSummarizer = function () {
         }
     }, {
         key: 'summarize',
-        value: function summarize(document, threshold) {
+        value: function summarize(doc, threshold) {
             var wordTokenizer = new natural.WordTokenizer();
-            var documentTokenizer = new Tokenizer();
-            documentTokenizer.setEntry(document);
+            var docTokenizer = new Tokenizer();
+            docTokenizer.setEntry(doc);
 
             // Convert document into vector, normalize document tokens:
-            var docWords = wordTokenizer.tokenize(document);
+            var docWords = wordTokenizer.tokenize(doc);
             docWords = docWords.filter(function (w) {
                 return w.match(/[a-z]/i) && !TextSummarizer._isNumber(w);
             }).map(function (w) {
@@ -71,7 +71,7 @@ var TextSummarizer = function () {
 
             // Tokenize document by sentence, convert each sentence into a vector,
             // normalize sentence tokens:
-            var sentVectors = documentTokenizer.getSentences().map(function (s, i) {
+            var sentVectors = docTokenizer.getSentences().map(function (s, i) {
                 return {
                     original: s,
                     vector: TextSummarizer._convertToVector(wordTokenizer.tokenize(s).filter(function (w) {
@@ -124,7 +124,9 @@ var TextSummarizer = function () {
                 var dotProd = 0;
                 sv.keys.forEach(function (k) {
                     sv.vector[k].tfIdf = sv.vector[k].weight * idf[k];
-                    dotProd += sv.vector[k].tfIdf * docVector[k].tfIdf;
+                    if (sv.vector[k].tfIdf && docVector[k].tfIdf) {
+                        dotProd += sv.vector[k].tfIdf * docVector[k].tfIdf;
+                    }
                     svNorm += Math.pow(sv.vector[k].tfIdf, 2);
                 });
                 svNorm = Math.sqrt(svNorm);
@@ -141,7 +143,10 @@ var TextSummarizer = function () {
             // Build summarized version of text by filtering all sentence vectors 
             // with scores that are greater or equal to the threshold
             // (between 0 - 1):
-            var summary = sentVectors.filter(function (sv) {
+            var summary = sentVectors.filter(function (sv, i) {
+                if (i == 0) {
+                    return true; // Always include first sentence
+                }
                 return sv.score >= threshold;
             }).map(function (sv) {
                 return sv.original;
@@ -150,27 +155,30 @@ var TextSummarizer = function () {
             // Return summarized version of the text:
             return summary;
         }
+
+        // Asynchronous version, use callback if it is passed, otherwise, return a 
+        // Promise:
+
     }, {
         key: 'summarizeAsync',
-        value: function summarizeAsync(document, threshold, callback) {
-            try {
-                var summary = TextSummarizer.summarize(document);
-                return callback(summary, undefined);
-            } catch (e) {
-                return callback(undefined, e);
-            }
-        }
-    }, {
-        key: 'summarizeAsyncPromise',
-        value: function summarizeAsyncPromise(document, threshold) {
-            return new Promise(function (resolve, reject) {
+        value: function summarizeAsync(doc, threshold, callback) {
+            if (callback) {
                 try {
-                    var summary = TextSummarizer.summarize(document);
-                    return resolve(summary);
+                    var summary = TextSummarizer.summarize(doc);
+                    return callback(summary, undefined);
                 } catch (e) {
-                    return reject(e);
+                    return callback(undefined, e);
                 }
-            });
+            } else {
+                return new Promise(function (resolve, reject) {
+                    try {
+                        var _summary = TextSummarizer.summarize(doc);
+                        return resolve(_summary);
+                    } catch (e) {
+                        return reject(e);
+                    }
+                });
+            }
         }
     }]);
 
